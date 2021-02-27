@@ -1,10 +1,11 @@
+require('dotenv').config()
+
 const express = require('express');
 const ejs = require('ejs');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
-const { promisify } = require('util');
+const puppeteer = require('puppeteer');
 
-const generatePDF = require('./util/generatePDF');
+const path = require('path');
+const { promisify } = require('util');
 
 const app = express();
 
@@ -28,9 +29,32 @@ const passengers = [
 
 app.use(express.static(path.resolve(__dirname, '..', 'public')))
 
+app.get('/pdf', async (_request, response) => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+
+  await page.goto(process.env.APP_URL, {
+    waitUntil: 'networkidle0',
+  });
+
+  const pdf = await page.pdf({
+    printBackground: true,
+    format: 'a4',
+    margin: {
+      top: '20px',
+      bottom: '20px',
+      right: '20px',
+      left: '20px',
+    }
+  });
+  
+  await browser.close();
+
+  return response.contentType('application/pdf').send(pdf);
+});
+
 app.get('/', async (_request, response) => {
   const asyncRenderFile = promisify(ejs.renderFile);
-  const asyncPDF = promisify(generatePDF);
 
   try {
     const page = await asyncRenderFile(
@@ -38,16 +62,10 @@ app.get('/', async (_request, response) => {
         { passengers }
       );
 
-    const file = await asyncPDF(
-      page,
-      path.resolve(__dirname, '..', 'public', `${uuidv4()}.pdf`)
-    );
-
-    return response.contentType('application/pdf').send(file);
-  
+    response.send(page)
   } catch (err) {
     return response.status(500).json({ 
-      error: 'Could not create PDF file',
+      error: 'Could not render page',
       details: err,
     });
   }
