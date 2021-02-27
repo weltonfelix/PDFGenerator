@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <title>Flight Report</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      font-family: 'Open Sans', sans-serif;
+      background: #FBFBFB;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin: 25px 0 50px 0;
+    }
+
+    table {
+      border-radius: 16px;
+      border-collapse: collapse;
+      width: 100vw;
+      margin: 0 auto;
+    }
+
+    thead th {
+      text-align: center;
+      background: #E0E0E0;
+
+      padding: 8px;
+    }
+
+    thead th:nth-child(even) {
+      background: #D0D0D0;
+    }
+
+    tbody td {
+      border-bottom: 1px solid #DDD;
+    }
+
+    td {
+      padding: 8px;
+      background: #F5F5F5;
+    }
+
+    td:nth-child(even) {
+      background: #EAEAEA;
+    }
+
+    tfoot {
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>Passenger List</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Flight Number</th>
+          <th>Departure Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (passengers.length > 0) { %>
+          <% passengers.forEach(passenger => {%>
+            <tr>
+              <td><%= passenger.name %></td>
+              <td><%= passenger.flightNumber %></td>
+              <td><%= passenger.time %></td>
+            </tr>
+          <% }); %> 
+        <% } %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3"><%= passengers.length %> passengers</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</body>
+</html>
